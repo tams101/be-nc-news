@@ -1,3 +1,19 @@
 exports.invalidPath = (req, res) => {
   res.status(404).send({msg: 'path doesn\'t exist'})
 }
+
+exports.idNotFound = (err, req, res, next) => {
+  if (err.msg === 'article does not exist') {
+    res.status(404).send({msg: err.msg})
+  } else {
+    next(err)
+  }
+}
+
+exports.invalidId = (err, req, res , next) => {
+  if (err.code === '22P02') {
+    res.status(400).send({msg: 'bad request'})
+  } else{
+    next(err)
+  }
+}
