@@ -8,8 +8,6 @@ const endpoints = require('./endpoints.json')
 
 const app = express();
 
-app.use(express.json());
-
 app.get('/api/topics', getAllTopics)
 
 app.get('/api', getAllEndpoints)
