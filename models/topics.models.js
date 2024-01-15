@@ -6,3 +6,4 @@ exports.retrieveAllTopics = () => {
     return rows
   })
 }
+
