@@ -7,9 +7,6 @@ exports.retrieveCommentsByArticleId = (article_id) => {
       [article_id]
     )
     .then(({ rows }) => {
-      if (rows.length === 0) {
-        return Promise.reject({ msg: "article does not exist" });
-      }
       return rows;
     });
 };
