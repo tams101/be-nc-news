@@ -10,10 +10,16 @@ exports.idNotFound = (err, req, res, next) => {
   }
 }
 
-exports.invalidId = (err, req, res , next) => {
+exports.psqlError = (err, req, res , next) => {
   if (err.code === '22P02') {
-    res.status(400).send({msg: 'bad request'})
+    res.status(400).send({msg: 'invalid id type'})
   } else{
+    next(err)
+  }
+
+  if(err.code === '23502') {
+    res.status(400).send({msg: 'bad request'})
+  } else {
     next(err)
   }
 }
