@@ -1,15 +1,11 @@
 const express = require("express");
 const { getAllTopics } = require("./controllers/topics.controllers");
 const { getAllEndpoints } = require("./controllers/api.controllers");
-const {
-  invalidPath,
-  idNotFound,
-  invalidId,
-  psqlError,
-} = require("./error-handling");
+const { invalidPath, idNotFound, psqlError } = require("./error-handling");
 const {
   getArticleById,
   getAllArticles,
+  patchArticleVotesById,
 } = require("./controllers/articles.controller");
 const {
   getCommentsByArticleId,
@@ -31,6 +27,8 @@ app.get("/api/articles", getAllArticles);
 app.get("/api/articles/:article_id/comments", getCommentsByArticleId);
 
 app.post("/api/articles/:article_id/comments", postNewComment);
+
+app.patch("/api/articles/:article_id", patchArticleVotesById);
 
 app.all("*", invalidPath);
 
