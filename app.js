@@ -12,6 +12,7 @@ const {
   postNewComment,
   deleteCommentById,
 } = require("./controllers/comments.controller");
+const { getAllUsers } = require("./controllers/users.controllers");
 
 const app = express();
 
@@ -32,6 +33,8 @@ app.post("/api/articles/:article_id/comments", postNewComment);
 app.patch("/api/articles/:article_id", patchArticleVotesById);
 
 app.delete("/api/comments/:comment_id", deleteCommentById);
+
+app.get("/api/users", getAllUsers)
 
 app.all("*", invalidPath);
 

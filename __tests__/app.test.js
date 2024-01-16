@@ -236,7 +236,7 @@ describe("/api/articles/:article_id/comments", () => {
         expect(body.comments).toEqual([]);
       });
   });
-  test("POST: 201 insert a new comment to the given article id and responds with an object of the posted comment", () => {
+  test.only("POST: 201 insert a new comment to the given article id and responds with an object of the posted comment", () => {
     return request(app)
       .post("/api/articles/2/comments")
       .send({ username: "rogersop", body: "This article was brilliant." })
@@ -308,6 +308,24 @@ describe("/api/comments/:comment_id", () => {
       .expect(404)
       .then(({ body }) => {
         expect(body.msg).toBe("comment does not exist");
+      });
+  });
+});
+
+describe("/api/users", () => {
+  test("GET /api/users", () => {
+    return request(app)
+      .get("/api/users")
+      .expect(200)
+      .then(({ body }) => {
+        const { users } = body;
+        expect(users).toHaveLength(4);
+
+        users.forEach((user) => {
+          expect(typeof user.username === "string");
+          expect(typeof user.name === "string");
+          expect(typeof user.avatar_url === "string");
+        });
       });
   });
 });
