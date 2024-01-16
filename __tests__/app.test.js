@@ -152,7 +152,7 @@ describe("/api/articles/:article_id/comments", () => {
       .get("/api/articles/1000/comments")
       .expect(404)
       .then(({ body }) => {
-        expect(body.msg).toBe("article does not exist");
+        expect(body.msg).toBe("article not found");
       });
   });
   test("GET: 400 responds with an error message when given an invalid id", () => {
@@ -161,6 +161,14 @@ describe("/api/articles/:article_id/comments", () => {
       .expect(400)
       .then(({ body }) => {
         expect(body.msg).toBe("invalid id type");
+      });
+  });
+  test("GET: 200 responds with an empty array when the article has no comments", () => {
+    return request(app)
+      .get("/api/articles/2/comments")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.comments).toEqual([]);
       });
   });
   test("POST: 201 insert a new comment to the given article id and responds with an object of the posted comment", () => {

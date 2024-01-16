@@ -2,11 +2,17 @@ const {
   retrieveCommentsByArticleId,
   addNewCommentByArticleId,
 } = require("../models/comments.models");
+const { checkArticleExists } = require("../utils/check-exists");
 
 exports.getCommentsByArticleId = (req, res, next) => {
   const { article_id } = req.params;
-  retrieveCommentsByArticleId(article_id)
-    .then((comments) => {
+
+  const articleExistenceQuery = checkArticleExists(article_id);
+  const fetchCommentsQuery = retrieveCommentsByArticleId(article_id);
+
+  Promise.all([fetchCommentsQuery, articleExistenceQuery])
+    .then((response) => {
+      const comments = response[0];
       res.status(200).send({ comments });
     })
     .catch((err) => {
