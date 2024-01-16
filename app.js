@@ -10,6 +10,7 @@ const {
 const {
   getCommentsByArticleId,
   postNewComment,
+  deleteCommentById,
 } = require("./controllers/comments.controller");
 
 const app = express();
@@ -29,6 +30,8 @@ app.get("/api/articles/:article_id/comments", getCommentsByArticleId);
 app.post("/api/articles/:article_id/comments", postNewComment);
 
 app.patch("/api/articles/:article_id", patchArticleVotesById);
+
+app.delete("/api/comments/:comment_id", deleteCommentById);
 
 app.all("*", invalidPath);
 

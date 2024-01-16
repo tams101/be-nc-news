@@ -38,7 +38,6 @@ exports.retrieveAllArticles = () => {
       if (!article.comment_count) {
         article.comment_count = 0;
       }
-
     });
 
     return articles;
@@ -46,17 +45,21 @@ exports.retrieveAllArticles = () => {
 };
 
 exports.updateArticleVotesById = (newVote, article_id) => {
-  return db.query(`
+  return db
+    .query(
+      `
   UPDATE articles
   SET 
   votes = votes + $1
   WHERE article_id = $2
   RETURNING *
-  `, [newVote, article_id])
-  .then(({rows}) => {
-    if (rows.length === 0) {
-      return Promise.reject({ msg: "article does not exist" });
-    }
-    return rows[0]
-  })
-}
+  `,
+      [newVote, article_id]
+    )
+    .then(({ rows }) => {
+      if (rows.length === 0) {
+        return Promise.reject({ msg: "article does not exist" });
+      }
+      return rows[0];
+    });
+};
