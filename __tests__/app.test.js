@@ -236,7 +236,7 @@ describe("/api/articles/:article_id/comments", () => {
         expect(body.comments).toEqual([]);
       });
   });
-  test.only("POST: 201 insert a new comment to the given article id and responds with an object of the posted comment", () => {
+  test("POST: 201 insert a new comment to the given article id and responds with an object of the posted comment", () => {
     return request(app)
       .post("/api/articles/2/comments")
       .send({ username: "rogersop", body: "This article was brilliant." })
