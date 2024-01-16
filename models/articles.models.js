@@ -18,30 +18,18 @@ exports.retrieveArticleById = (article_id) => {
 };
 
 exports.retrieveAllArticles = () => {
-  const promiseOne = db.query(
-    "SELECT articles.author, articles.title, articles.article_id, articles.topic, articles.created_at, articles.votes, articles.votes, articles.article_img_url FROM articles ORDER BY created_at DESC"
-  );
-  const promiseTwo = db.query(`
-  SELECT COUNT(article_id), article_id FROM comments GROUP BY article_id
-  `);
-
-  return Promise.all([promiseOne, promiseTwo]).then((result) => {
-    const articles = result[0].rows;
-    const comments = result[1].rows;
-
-    articles.forEach((article) => {
-      comments.forEach((commentCount) => {
-        if (article.article_id === commentCount.article_id) {
-          article.comment_count = +commentCount.count;
-        }
-      });
-      if (!article.comment_count) {
-        article.comment_count = 0;
-      }
+  return db
+    .query(
+      `
+  SELECT articles.author, articles.title, articles.article_id, articles.topic, articles.created_at, articles.votes, articles.article_img_url, COUNT (comments.comment_id)::INT AS comment_count FROM articles 
+  LEFT JOIN comments ON articles.article_id = comments.article_id
+  GROUP BY articles.article_id
+  ORDER BY created_at DESC
+  `
+    )
+    .then(({ rows }) => {
+      return rows;
     });
-
-    return articles;
-  });
 };
 
 exports.updateArticleVotesById = (newVote, article_id) => {
