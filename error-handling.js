@@ -22,4 +22,8 @@ exports.psqlError = (err, req, res, next) => {
   } else {
     next(err);
   }
+
+  if(err.code === '23503') {
+    res.status(404).send({msg: "not found"})
+  }
 };
