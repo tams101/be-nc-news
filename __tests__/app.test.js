@@ -99,6 +99,56 @@ describe("/api/articles/:article_id", () => {
         expect(body.msg).toBe("invalid id type");
       });
   });
+  test("PATCH: 200 increments the vote property of an article (using the id) and responds with the updated article", () => {
+    return request(app).patch("/api/articles/3").send({inc_votes: 1})
+    .expect(200)
+    .then(({body}) => {
+      expect(body.article).toEqual({
+        article_id: 3,
+        title: "Eight pug gifs that remind me of mitch",
+        topic: "mitch",
+        author: "icellusedkars",
+        body: "some gifs",
+        created_at: "2020-11-03T09:12:00.000Z",
+        article_img_url: "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700",
+        votes: 1
+      })
+    })
+  });
+  test("PATCH: 200 decrements the vote property of an article (using the id) and responds with the updated article", () => {
+    return request(app).patch("/api/articles/3").send({inc_votes: -100})
+    .expect(200)
+    .then(({body}) => {
+      expect(body.article).toEqual({
+        article_id: 3,
+        title: "Eight pug gifs that remind me of mitch",
+        topic: "mitch",
+        author: "icellusedkars",
+        body: "some gifs",
+        created_at: "2020-11-03T09:12:00.000Z",
+        article_img_url: "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700",
+        votes: -100
+      })
+    })
+  });
+  test("PATCH: 404 error message is sent when given a non-existent id", () => {
+    return request(app).patch('/api/articles/9999').send({inc_votes: 100})
+    .expect(404).then(({body}) => {
+      expect(body.msg).toBe('article does not exist')
+    })
+  });
+  test("PATCH: 400 error message is sent when given a malformed body", () => {
+    return request(app).patch('/api/articles/1').send({})
+    .expect(400).then(({body}) => {
+      expect(body.msg).toBe('bad request')
+    })
+  });
+  test("PATCH: 400 error message is sent when given an invalid id", () => {
+    return request(app).patch("/api/articles/not_an_id").send({inc_votes: 100})
+    .expect(400).then(({body}) => {
+      expect(body.msg).toBe('invalid id type')
+    })
+  })
 });
 
 describe("/api/articles", () => {
