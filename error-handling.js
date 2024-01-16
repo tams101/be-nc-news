@@ -3,7 +3,7 @@ exports.invalidPath = (req, res) => {
 }
 
 exports.idNotFound = (err, req, res, next) => {
-  if (err.msg === 'article does not exist') {
+  if (err.msg) {
     res.status(404).send({msg: err.msg})
   } else {
     next(err)

@@ -125,3 +125,42 @@ describe("/api/articles", () => {
       });
   });
 });
+
+describe("/api/articles/:article_id/comments", () => {
+  test("GET: 200 responds with an array of comments for the given article_id with most recent comments first", () => {
+    return request(app)
+      .get("/api/articles/1/comments")
+      .expect(200)
+      .then(({ body }) => {
+        const { comments } = body;
+
+        expect(comments).toHaveLength(11);
+        comments.forEach((comment) => {
+          expect(comment.article_id).toBe(1);
+          expect(typeof comment.comment_id).toBe("number");
+          expect(typeof comment.votes).toBe("number");
+          expect(typeof comment.created_at).toBe("string");
+          expect(typeof comment.author).toBe("string");
+          expect(typeof comment.body).toBe("string");
+        });
+
+        expect(comments).toBeSortedBy("created_at", { descending: true });
+      });
+  });
+  test("GET: 404 responds with an error message when given a valid but non-existent id", () => {
+    return request(app)
+      .get("/api/articles/1000/comments")
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe("article does not exist");
+      });
+  });
+  test("GET: 400 responds with an error message when given an invalid id", () => {
+    return request(app)
+      .get("/api/articles/banana/comments")
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("bad request");
+      });
+  });
+});

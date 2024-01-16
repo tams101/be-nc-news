@@ -1,4 +1,4 @@
-const {retrieveArticleById, retrieveAllArticles} = require('../models/articles.models')
+const {retrieveArticleById, retrieveAllArticles, retrieveCommentsByArticleId} = require('../models/articles.models')
 
 exports.getArticleById = (req, res, next) => {
   const {article_id} = req.params
