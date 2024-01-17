@@ -194,7 +194,6 @@ describe("/api/articles", () => {
       .get("/api/articles?topic=mitch")
       .expect(200)
       .then(({ body }) => {
-        console.log(body.articles)
         const { articles } = body;
         expect(articles).toHaveLength(12);
         articles.forEach((article) => {
