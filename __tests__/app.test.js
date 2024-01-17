@@ -189,6 +189,35 @@ describe("/api/articles", () => {
         });
       });
   });
+  test("GET: 200 Filter articles by topic query", () => {
+    return request(app)
+      .get("/api/articles?topic=mitch")
+      .expect(200)
+      .then(({ body }) => {
+        console.log(body.articles)
+        const { articles } = body;
+        expect(articles).toHaveLength(12);
+        articles.forEach((article) => {
+          expect(article.topic === "mitch");
+        });
+      });
+  });
+  test("GET: 200 return empty array when given a valid topic but there are no articles for that topic", () => {
+    return request(app)
+      .get("/api/articles?topic=paper")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.articles).toEqual([]);
+      });
+  });
+  test("GET: 404 error message is sent when given a non-existent topic", () => {
+    return request(app)
+      .get("/api/articles?topic=not_a_topic")
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe("topic not found");
+      });
+  });
 });
 
 describe("/api/articles/:article_id/comments", () => {

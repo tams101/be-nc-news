@@ -1,7 +1,12 @@
 const express = require("express");
 const { getAllTopics } = require("./controllers/topics.controllers");
 const { getAllEndpoints } = require("./controllers/api.controllers");
-const { invalidPath, idNotFound, psqlError } = require("./error-handling");
+const {
+  invalidPath,
+  idNotFound,
+  psqlError,
+  internalServerError,
+} = require("./error-handling");
 const {
   getArticleById,
   getAllArticles,
@@ -34,7 +39,7 @@ app.patch("/api/articles/:article_id", patchArticleVotesById);
 
 app.delete("/api/comments/:comment_id", deleteCommentById);
 
-app.get("/api/users", getAllUsers)
+app.get("/api/users", getAllUsers);
 
 app.all("*", invalidPath);
 
@@ -42,5 +47,7 @@ app.all("*", invalidPath);
 app.use(idNotFound);
 
 app.use(psqlError);
+
+app.use(internalServerError);
 
 module.exports = app;
