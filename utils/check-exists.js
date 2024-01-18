@@ -19,3 +19,12 @@ exports.checkTopicExists = (topic) => {
       }
     });
 };
+
+exports.checkAuthorExists = (author) => {
+  return db.query("SELECT * FROM users WHERE username = $1", [author])
+  .then(({rows}) => {
+    if (rows.length === 0) {
+      return Promise.reject({msg: "author not found"})
+    }
+  })
+}
