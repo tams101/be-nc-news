@@ -266,7 +266,7 @@ describe("/api/articles/:article_id/comments", () => {
         expect(body.comments).toEqual([]);
       });
   });
-  test.only("POST: 201 insert a new comment to the given article id and responds with an object of the posted comment", () => {
+  test("POST: 201 insert a new comment to the given article id and responds with an object of the posted comment", () => {
     return request(app)
       .post("/api/articles/2/comments")
       .send({ username: "rogersop", body: "This article was brilliant." })
@@ -280,8 +280,8 @@ describe("/api/articles/:article_id/comments", () => {
         expect(comment.hasOwnProperty("article_id")).toBe(true);
         expect(comment.hasOwnProperty("created_at")).toBe(true);
 
-        expect(comment.author === "rogersop");
-        expect(comment.body === "This article was brilliant.");
+        expect(comment.author === "rogersop").toBe(true);
+        expect(comment.body === "This article was brilliant.").toBe(true);
       });
   });
   test("POST: 400 responds with an error message when given a malformed body", () => {
