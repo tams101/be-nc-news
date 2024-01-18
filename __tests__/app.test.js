@@ -97,7 +97,7 @@ describe("/api/articles/:article_id", () => {
       .get("/api/articles/orange")
       .expect(400)
       .then(({ body }) => {
-        expect(body.msg).toBe("invalid id type");
+        expect(body.msg).toBe("bad request");
       });
   });
   test("PATCH: 200 increments the vote property of an article (using the id) and responds with the updated article", () => {
@@ -162,7 +162,7 @@ describe("/api/articles/:article_id", () => {
       .send({ inc_votes: 100 })
       .expect(400)
       .then(({ body }) => {
-        expect(body.msg).toBe("invalid id type");
+        expect(body.msg).toBe("bad request");
       });
   });
 });
@@ -349,7 +349,7 @@ describe("/api/articles/:article_id/comments", () => {
       .get("/api/articles/banana/comments")
       .expect(400)
       .then(({ body }) => {
-        expect(body.msg).toBe("invalid id type");
+        expect(body.msg).toBe("bad request");
       });
   });
   test("GET: 200 responds with an empty array when the article has no comments", () => {
@@ -391,7 +391,7 @@ describe("/api/articles/:article_id/comments", () => {
       .post("/api/articles/banana/comments")
       .expect(400)
       .then(({ body }) => {
-        expect(body.msg).toBe("invalid id type");
+        expect(body.msg).toBe("bad request");
       });
   });
   test("POST: 404 responds with an error message when given a non-existent id", () => {
@@ -423,7 +423,7 @@ describe("/api/comments/:comment_id", () => {
       .delete("/api/comments/not-an-id")
       .expect(400)
       .then(({ body }) => {
-        expect(body.msg).toBe("invalid id type");
+        expect(body.msg).toBe("bad request");
       });
   });
   test("DELETE: 404 returns an error message when given a non-existent id", () => {
@@ -432,6 +432,69 @@ describe("/api/comments/:comment_id", () => {
       .expect(404)
       .then(({ body }) => {
         expect(body.msg).toBe("comment does not exist");
+      });
+  });
+  test("PATCH: 200 increment the votes on a comment given the comment_id", () => {
+    return request(app)
+      .patch("/api/comments/6")
+      .send({ inc_votes: 1 })
+      .expect(200)
+      .then(({ body }) => {
+        const { comment } = body;
+
+        expect(comment).toEqual({
+          comment_id: 6,
+          body: "I hate streaming eyes even more",
+          votes: 1,
+          author: "icellusedkars",
+          article_id: 1,
+          created_at: "2020-04-11T21:02:00.000Z",
+        });
+      });
+  });
+  test("PATCH: 200 decrement the votes on a comment given the comment_id", () => {
+    return request(app)
+      .patch("/api/comments/7")
+      .send({ inc_votes: -100 })
+      .expect(200)
+      .then(({ body }) => {
+        const { comment } = body;
+
+        expect(comment).toEqual({
+          comment_id: 7,
+          body: "Lobster pot",
+          votes: -100,
+          author: "icellusedkars",
+          article_id: 1,
+          created_at: "2020-05-15T20:19:00.000Z",
+        });
+      });
+  });
+  test("PATCH: 400 error message is sent when given a malformed body", () => {
+    return request(app)
+      .patch("/api/comments/6")
+      .send({ inc_votes: "one" })
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("bad request");
+      });
+  });
+  test("PATCH: 404 error message is sent when given a non-existent comment id", () => {
+    return request(app)
+      .patch("/api/comments/99999")
+      .send({ inc_votes: 1 })
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe("comment_id not found");
+      });
+  });
+  test("PATCH: 400 error message is sent when given an invalid comment id", () => {
+    return request(app)
+      .patch("/api/comments/not-an-id")
+      .send({ inc_votes: 1 })
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("bad request");
       });
   });
 });

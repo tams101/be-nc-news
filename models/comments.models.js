@@ -41,3 +41,23 @@ exports.removeCommentById = (comment_id) => {
       }
     });
 };
+
+exports.updateCommentVotesById = (newVotes, comment_id) => {
+  return db
+    .query(
+      `
+  UPDATE comments
+  SET
+  votes = votes + $1
+  WHERE comment_id = $2
+  RETURNING *
+  `,
+      [newVotes, comment_id]
+    )
+    .then(({ rows }) => {
+      if (rows.length === 0) {
+        return Promise.reject({ msg: "comment_id not found" });
+      }
+      return rows[0];
+    });
+};

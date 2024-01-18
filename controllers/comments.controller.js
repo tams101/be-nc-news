@@ -2,6 +2,7 @@ const {
   retrieveCommentsByArticleId,
   addNewCommentByArticleId,
   removeCommentById,
+  updateCommentVotesById,
 } = require("../models/comments.models");
 const { checkArticleExists } = require("../utils/check-exists");
 
@@ -44,3 +45,14 @@ exports.deleteCommentById = (req, res, next) => {
       next(err);
     });
 };
+
+exports.patchCommentVotesById = (req, res, next) => {
+  const {comment_id} = req.params
+  const newVotes = req.body.inc_votes
+  updateCommentVotesById(newVotes, comment_id).then((comment) => {
+    res.status(200).send({comment})
+  })
+  .catch((err) => {
+    next(err)
+  })
+}
