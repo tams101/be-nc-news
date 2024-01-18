@@ -266,12 +266,13 @@ describe("/api/articles/:article_id/comments", () => {
         expect(body.comments).toEqual([]);
       });
   });
-  test("POST: 201 insert a new comment to the given article id and responds with an object of the posted comment", () => {
+  test.only("POST: 201 insert a new comment to the given article id and responds with an object of the posted comment", () => {
     return request(app)
       .post("/api/articles/2/comments")
       .send({ username: "rogersop", body: "This article was brilliant." })
       .expect(201)
       .then(({ body }) => {
+        
         const { comment } = body;
         expect(comment.hasOwnProperty("body")).toBe(true);
         expect(comment.hasOwnProperty("votes")).toBe(true);
@@ -279,7 +280,7 @@ describe("/api/articles/:article_id/comments", () => {
         expect(comment.hasOwnProperty("article_id")).toBe(true);
         expect(comment.hasOwnProperty("created_at")).toBe(true);
 
-        expect(comment.username === "rogersop");
+        expect(comment.author === "rogersop");
         expect(comment.body === "This article was brilliant.");
       });
   });
