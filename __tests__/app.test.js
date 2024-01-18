@@ -453,3 +453,29 @@ describe("/api/users", () => {
       });
   });
 });
+
+describe("/api/users/:username", () => {
+  test("GET: 200 returns a user object for the given username", () => {
+    return request(app)
+      .get("/api/users/icellusedkars")
+      .expect(200)
+      .then(({ body }) => {
+        const { user } = body;
+        expect(Object.keys(user).length).toBe(3);
+        expect(user).toEqual({
+          username: "icellusedkars",
+          name: "sam",
+          avatar_url:
+            "https://avatars2.githubusercontent.com/u/24604688?s=460&v=4",
+        });
+      });
+  });
+  test("GET: 404 returns an error message when the user doesn't exist", () => {
+    return request(app)
+      .get("/api/users/johnsmith")
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe("user doesn't exist");
+      });
+  });
+});
