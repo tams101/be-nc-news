@@ -3,7 +3,6 @@ const db = require("../db/connection");
 const app = require("../app");
 const seed = require("../db/seeds/seed");
 const data = require("../db/data/test-data/index");
-const fs = require("fs/promises");
 const endpoints = require("../endpoints.json");
 
 afterAll(() => {
@@ -293,8 +292,8 @@ describe("/api/articles", () => {
         const { articles } = body;
         expect(articles).toHaveLength(4);
         articles.forEach((article) => {
-          expect(article.author === 'butter_bridge')
-        })
+          expect(article.author === "butter_bridge");
+        });
       });
   });
   test("GET: 200 returns empty array when given a valid author but there are no articles by that author", () => {
