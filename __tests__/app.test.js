@@ -200,21 +200,24 @@ describe("/api/articles/:article_id", () => {
       });
   });
   test("DELETE: 204 delete an article by id", () => {
-    return request(app).delete('/api/articles/5')
-    .expect(204)
+    return request(app).delete("/api/articles/5").expect(204);
   });
   test("DELETE: 404 error message when id does not exist", () => {
-    return request(app).delete('/api/articles/9999')
-    .expect(404).then(({body}) => {
-      expect(body.msg).toBe('article does not exist')
-    })
+    return request(app)
+      .delete("/api/articles/9999")
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe("article does not exist");
+      });
   });
   test("DELETE: 400 error message when invalid id given", () => {
-    return request(app).delete('/api/articles/not-an-id')
-    .expect(400).then(({body}) => {
-      expect(body.msg).toBe('bad request')
-    })
-  })
+    return request(app)
+      .delete("/api/articles/not-an-id")
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("bad request");
+      });
+  });
 });
 
 describe("/api/articles", () => {
@@ -431,6 +434,43 @@ describe("/api/articles", () => {
       .then(({ body }) => {
         const { articles } = body;
         expect(articles).toHaveLength(10);
+        expect(body.total_count).toBe(13);
+      });
+  });
+  test("GET: 200 returns all articles on page 1 (limit = 5 articles)", () => {
+    return request(app)
+      .get("/api/articles?p=1&limit=5")
+      .expect(200)
+      .then(({ body }) => {
+        const { articles } = body;
+        expect(articles).toHaveLength(5);
+        expect(body.total_count).toBe(13);
+      });
+  });
+  test("GET: 200 returns all articles on page 2 with topic is 'mitch' (limit = 8 articles)", () => {
+    return request(app)
+      .get("/api/articles?topic=mitch&p=2&limit=8")
+      .expect(200)
+      .then(({ body }) => {
+        const { articles } = body;
+        expect(articles).toHaveLength(4);
+        expect(body.total_count).toBe(12);
+      });
+  });
+  test("GET: 400 an error message is sent when given an incorrect data type for p query", () => {
+    return request(app)
+      .get("/api/articles?p=one")
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("bad request");
+      });
+  });
+  test("GET: 400 an error message is sent when given an incorrect data type for limit query", () => {
+    return request(app)
+      .get("/api/articles?p=1&limit=one")
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("bad request");
       });
   });
 });
