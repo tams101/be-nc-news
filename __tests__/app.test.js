@@ -199,6 +199,22 @@ describe("/api/articles/:article_id", () => {
         expect(body.msg).toBe("bad request");
       });
   });
+  test("DELETE: 204 delete an article by id", () => {
+    return request(app).delete('/api/articles/5')
+    .expect(204)
+  });
+  test("DELETE: 404 error message when id does not exist", () => {
+    return request(app).delete('/api/articles/9999')
+    .expect(404).then(({body}) => {
+      expect(body.msg).toBe('article does not exist')
+    })
+  });
+  test("DELETE: 400 error message when invalid id given", () => {
+    return request(app).delete('/api/articles/not-an-id')
+    .expect(400).then(({body}) => {
+      expect(body.msg).toBe('bad request')
+    })
+  })
 });
 
 describe("/api/articles", () => {
