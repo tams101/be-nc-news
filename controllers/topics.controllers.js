@@ -1,4 +1,4 @@
-const {retrieveAllTopics, retrieveAllEndpoints} = require('../models/topics.models')
+const {retrieveAllTopics, addNewTopic} = require('../models/topics.models')
 
 exports.getAllTopics = (req, res, next) => {
   retrieveAllTopics().then((topics) => {
@@ -6,3 +6,11 @@ exports.getAllTopics = (req, res, next) => {
   })
 }
 
+exports.postNewTopic = (req, res, next) => {
+  const newTopic = req.body
+  addNewTopic(newTopic).then((addedTopic) => {
+    res.status(201).send({topic: addedTopic})
+  }).catch((err) => {
+    next(err)
+  })
+}

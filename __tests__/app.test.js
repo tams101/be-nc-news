@@ -27,6 +27,40 @@ describe("/api/topics", () => {
         });
       });
   });
+  test("POST: 201 adds a new topic", () => {
+    return request(app)
+      .post("/api/topics")
+      .send({
+        slug: "tea",
+        description: "all things tea",
+      })
+      .expect(201)
+      .then(({ body }) => {
+        const { topic } = body;
+        expect(topic).toEqual({
+          slug: "tea",
+          description: "all things tea",
+        });
+      });
+  });
+  test("POST: 400 an error message is sent when given a malformed body - missing slug", () => {
+    return request(app)
+      .post("/api/topics")
+      .send({ description: "all things tea" })
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("bad request");
+      });
+  });
+  test("POST: 400 an error message is sent when given a malformed body - missing description", () => {
+    return request(app)
+      .post("/api/topics")
+      .send({ slug: "all things tea" })
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("description is required");
+      });
+  });
 });
 
 describe("Invalid path", () => {
@@ -268,18 +302,18 @@ describe("/api/articles", () => {
         expect(articles).toBeSortedBy("topic", { ascending: true });
       });
   });
-  test("GET: 404 when given a sort by query that doesn't exist", () => {
+  test("GET: 400 when given a sort by query that doesn't exist", () => {
     return request(app)
       .get("/api/articles?sort_by=banana")
-      .expect(404)
+      .expect(400)
       .then(({ body }) => {
         expect(body.msg).toBe("invalid sort_by query");
       });
   });
-  test("GET: 404 when given an order query that doesn't exist", () => {
+  test("GET: 400 when given an order query that doesn't exist", () => {
     return request(app)
       .get("/api/articles/?order=banana")
-      .expect(404)
+      .expect(400)
       .then(({ body }) => {
         expect(body.msg).toBe("invalid order query");
       });
@@ -314,68 +348,75 @@ describe("/api/articles", () => {
       });
   });
   test("POST: 201 returns the added article", () => {
-    return request(app).post('/api/articles')
-    .send({
-      author: 'rogersop',
-      title: 'The Mitch',
-      body: 'The wonders of mitch',
-      topic: 'mitch',
-      article_img_url: 'https://www.mitch.com/mitch'
-    })
-    .expect(201).then(({body}) => {
-      const {article} = body
-      expect(article.author).toBe('rogersop')
-      expect(article.title).toBe('The Mitch')
-      expect(article.body).toBe('The wonders of mitch')
-      expect(article.topic).toBe('mitch')
-      expect(article.article_img_url).toBe('https://www.mitch.com/mitch')
-      expect(article.votes).toBe(0)
-      expect(article.article_id).toBe(14)
-      expect(article.comment_count).toBe(0)
-      expect(article.hasOwnProperty('created_at')).toBe(true)
-    })
+    return request(app)
+      .post("/api/articles")
+      .send({
+        author: "rogersop",
+        title: "The Mitch",
+        body: "The wonders of mitch",
+        topic: "mitch",
+        article_img_url: "https://www.mitch.com/mitch",
+      })
+      .expect(201)
+      .then(({ body }) => {
+        const { article } = body;
+        expect(article.author).toBe("rogersop");
+        expect(article.title).toBe("The Mitch");
+        expect(article.body).toBe("The wonders of mitch");
+        expect(article.topic).toBe("mitch");
+        expect(article.article_img_url).toBe("https://www.mitch.com/mitch");
+        expect(article.votes).toBe(0);
+        expect(article.article_id).toBe(14);
+        expect(article.comment_count).toBe(0);
+        expect(article.hasOwnProperty("created_at")).toBe(true);
+      });
   });
   test("POST: 201 returns the added article (when article_img_url not provided returns default value)", () => {
-    return request(app).post('/api/articles')
-    .send({
-      author: 'rogersop',
-      title: 'The Mitch',
-      body: 'The wonders of mitch',
-      topic: 'mitch',
-    })
-    .expect(201).then(({body}) => {
-      const {article} = body
-      expect(article.author).toBe('rogersop')
-      expect(article.title).toBe('The Mitch')
-      expect(article.body).toBe('The wonders of mitch')
-      expect(article.topic).toBe('mitch')
-      expect(article.article_img_url).toBe('https://www.example.com/default_img')
-      expect(article.votes).toBe(0)
-      expect(article.article_id).toBe(14)
-      expect(article.comment_count).toBe(0)
-      expect(article.hasOwnProperty('created_at')).toBe(true)
-    })
+    return request(app)
+      .post("/api/articles")
+      .send({
+        author: "rogersop",
+        title: "The Mitch",
+        body: "The wonders of mitch",
+        topic: "mitch",
+      })
+      .expect(201)
+      .then(({ body }) => {
+        const { article } = body;
+        expect(article.author).toBe("rogersop");
+        expect(article.title).toBe("The Mitch");
+        expect(article.body).toBe("The wonders of mitch");
+        expect(article.topic).toBe("mitch");
+        expect(article.article_img_url).toBe(
+          "https://www.example.com/default_img"
+        );
+        expect(article.votes).toBe(0);
+        expect(article.article_id).toBe(14);
+        expect(article.comment_count).toBe(0);
+        expect(article.hasOwnProperty("created_at")).toBe(true);
+      });
   });
   test("POST: 400 returns an error message when missing required fields", () => {
-    return request(app).post('/api/articles')
-    .send(
-      {
-        author: 'rogersop',
-        title: 'The Mitch',
-      }
-    )
-    .expect(400)
-    .then(({body}) => {
-      expect(body.msg).toBe('bad request')
-    })
+    return request(app)
+      .post("/api/articles")
+      .send({
+        author: "rogersop",
+        title: "The Mitch",
+      })
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("bad request");
+      });
   });
   test("GET: 200 returns all articles on page 1 (default returns 10 articles)", () => {
-    return request(app).get('/api/articles?p=1')
-    .expect(200).then(({body}) => {
-      const {articles} = body
-      expect(articles).toHaveLength(10)
-    })
-  })
+    return request(app)
+      .get("/api/articles?p=1")
+      .expect(200)
+      .then(({ body }) => {
+        const { articles } = body;
+        expect(articles).toHaveLength(10);
+      });
+  });
 });
 
 describe("/api/articles/:article_id/comments", () => {

@@ -37,7 +37,7 @@ exports.removeCommentById = (comment_id) => {
     )
     .then(({ rows }) => {
       if (rows.length === 0) {
-        return Promise.reject({ msg: "comment does not exist" });
+        return Promise.reject({ status: 404, msg:"comment does not exist" });
       }
     });
 };
@@ -56,7 +56,7 @@ exports.updateCommentVotesById = (newVotes, comment_id) => {
     )
     .then(({ rows }) => {
       if (rows.length === 0) {
-        return Promise.reject({ msg: "comment_id not found" });
+        return Promise.reject({ status: 404, msg: "comment_id not found" });
       }
       return rows[0];
     });
