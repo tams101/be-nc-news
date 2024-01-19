@@ -14,7 +14,7 @@ exports.retrieveArticleById = (article_id) => {
     )
     .then(({ rows }) => {
       if (rows.length === 0) {
-        return Promise.reject({status: 404, msg: "article does not exist" });
+        return Promise.reject({ status: 404, msg: "article does not exist" });
       }
       return rows[0];
     });
@@ -75,10 +75,16 @@ exports.retrieveAllArticles = (
     `;
 
   if (p && limit) {
-    queryParams.push(limit, p);
-    queryStr += ` LIMIT $${queryParams.length - 1}
+    return db.query(queryStr, queryParams).then((response) => {
+      const count = response.rowCount;
+      queryParams.push(limit, p);
+      queryStr += ` LIMIT $${queryParams.length - 1}
     OFFSET (($${queryParams.length} - 1) * $${queryParams.length - 1})
     `;
+      return db.query(queryStr, queryParams).then((response) => {
+        return { total_count: count, articles: response.rows };
+      });
+    });
   }
 
   return db.query(queryStr, queryParams).then(({ rows }) => {
@@ -100,7 +106,7 @@ exports.updateArticleVotesById = (newVote, article_id) => {
     )
     .then(({ rows }) => {
       if (rows.length === 0) {
-        return Promise.reject({status: 404, msg: "article does not exist" });
+        return Promise.reject({ status: 404, msg: "article does not exist" });
       }
       return rows[0];
     });
@@ -141,15 +147,18 @@ exports.addNewArticle = ({
 };
 
 exports.removeArticleById = (article_id) => {
-  return db.query(
-    `DELETE FROM articles
+  return db
+    .query(
+      `DELETE FROM articles
       WHERE article_id = $1
       RETURNING *
-    `, [article_id]
-  ).then(({rows}) => {
-    if(rows.length === 0) {
-      return Promise.reject({status: 404, msg: 'article does not exist'})
-    }
-    return rows
-  })
-}
+    `,
+      [article_id]
+    )
+    .then(({ rows }) => {
+      if (rows.length === 0) {
+        return Promise.reject({ status: 404, msg: "article does not exist" });
+      }
+      return rows;
+    });
+};
