@@ -2,9 +2,9 @@ const express = require("express");
 
 const {
   invalidPath,
-  idNotFound,
   psqlError,
   internalServerError,
+  customError,
 } = require("./error-handling");
 
 const apiRouter = require("./routes/api-router");
@@ -30,7 +30,7 @@ app.use("/api/users", usersRouter);
 app.all("*", invalidPath);
 
 //Error handling
-app.use(idNotFound);
+app.use(customError);
 
 app.use(psqlError);
 

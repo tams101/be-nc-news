@@ -2,9 +2,9 @@ exports.invalidPath = (req, res) => {
   res.status(404).send({ msg: "path doesn't exist" });
 };
 
-exports.idNotFound = (err, req, res, next) => {
-  if (err.msg) {
-    res.status(404).send({ msg: err.msg });
+exports.customError = (err, req, res, next) => {
+  if (err.status && err.msg) {
+    res.status(err.status).send({ msg: err.msg });
   } else {
     next(err);
   }

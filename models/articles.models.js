@@ -14,7 +14,7 @@ exports.retrieveArticleById = (article_id) => {
     )
     .then(({ rows }) => {
       if (rows.length === 0) {
-        return Promise.reject({ msg: "article does not exist" });
+        return Promise.reject({status: 404, msg: "article does not exist" });
       }
       return rows[0];
     });
@@ -42,11 +42,11 @@ exports.retrieveAllArticles = (
   const validOrderQueries = ["asc", "desc"];
 
   if (!validSortQueries.includes(sort_by)) {
-    return Promise.reject({ msg: "invalid sort_by query" });
+    return Promise.reject({ status: 400, msg: "invalid sort_by query" });
   }
 
   if (!validOrderQueries.includes(order)) {
-    return Promise.reject({ msg: "invalid order query" });
+    return Promise.reject({ status: 400, msg: "invalid order query" });
   }
 
   let queryStr = `
@@ -100,7 +100,7 @@ exports.updateArticleVotesById = (newVote, article_id) => {
     )
     .then(({ rows }) => {
       if (rows.length === 0) {
-        return Promise.reject({ msg: "article does not exist" });
+        return Promise.reject({status: 404, msg: "article does not exist" });
       }
       return rows[0];
     });
