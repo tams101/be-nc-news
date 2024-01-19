@@ -7,10 +7,10 @@ const {
 const { checkArticleExists } = require("../utils/check-exists");
 
 exports.getCommentsByArticleId = (req, res, next) => {
-  const { article_id } = req.params;
-
+  const { article_id} = req.params;
+  const {limit, p} = req.query
   const articleExistenceQuery = checkArticleExists(article_id);
-  const fetchCommentsQuery = retrieveCommentsByArticleId(article_id);
+  const fetchCommentsQuery = retrieveCommentsByArticleId(article_id, p, limit);
 
   Promise.all([fetchCommentsQuery, articleExistenceQuery])
     .then((response) => {
