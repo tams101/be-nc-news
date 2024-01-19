@@ -5,11 +5,9 @@ exports.retrieveCommentsByArticleId = (article_id, p, limit = 10) => {
   
   if(p && limit) {
     queryStr += ` LIMIT $2 OFFSET $3`
-    console.log(queryStr)
 
     return db.query(queryStr, [article_id, limit, p])
     .then(({rows}) => {
-      console.log(rows)
       return rows
     })
   }
