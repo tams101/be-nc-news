@@ -2,8 +2,12 @@ const {
   retrieveArticleById,
   retrieveAllArticles,
   updateArticleVotesById,
+  addNewArticle,
 } = require("../models/articles.models");
-const { checkTopicExists, checkAuthorExists } = require("../utils/check-exists");
+const {
+  checkTopicExists,
+  checkAuthorExists,
+} = require("../utils/check-exists");
 
 exports.getArticleById = (req, res, next) => {
   const { article_id } = req.params;
@@ -19,7 +23,6 @@ exports.getArticleById = (req, res, next) => {
 exports.getAllArticles = (req, res, next) => {
   const { topic, sort_by, order, author } = req.query;
 
-
   const fetchArticlesQuery = retrieveAllArticles(topic, sort_by, order, author);
 
   const queries = [fetchArticlesQuery];
@@ -29,9 +32,9 @@ exports.getAllArticles = (req, res, next) => {
     queries.push(topicExistenceQuery);
   }
 
-  if(author) {
-    const authorExistenceQuery = checkAuthorExists(author)
-    queries.push(authorExistenceQuery)
+  if (author) {
+    const authorExistenceQuery = checkAuthorExists(author);
+    queries.push(authorExistenceQuery);
   }
 
   Promise.all(queries)
@@ -54,4 +57,14 @@ exports.patchArticleVotesById = (req, res, next) => {
     .catch((err) => {
       next(err);
     });
+};
+
+exports.postNewArticle = (req, res, next) => {
+  const article = req.body;
+  addNewArticle(article).then((newArticle) => {
+    res.status(201).send({ article: newArticle });
+  })
+  .catch((err) => {
+    next(err)
+  });
 };
