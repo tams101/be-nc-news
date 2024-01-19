@@ -95,3 +95,31 @@ exports.updateArticleVotesById = (newVote, article_id) => {
       return rows[0];
     });
 };
+
+exports.addNewArticle = ({ author, title, body, topic, article_img_url = "https://www.example.com/default_img" }) => {
+  return db
+    .query(
+      `
+  INSERT INTO articles
+  (author, title, body, topic, article_img_url)
+  VALUES
+  ($1, $2, $3, $4, $5)
+  `,
+      [author, title, body, topic, article_img_url]
+    )
+    .then(() => {
+      return db
+        .query(
+          `
+      SELECT articles.*, COUNT (comments.comment_id)::INT AS comment_count FROM articles 
+      LEFT JOIN comments ON articles.article_id = comments.article_id
+      GROUP BY articles.article_id
+      ORDER BY articles.created_at DESC
+      LIMIT 1
+      `
+        )
+        .then(({ rows }) => {
+          return rows[0];
+        });
+    });
+};

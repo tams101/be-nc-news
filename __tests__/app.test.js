@@ -313,6 +313,62 @@ describe("/api/articles", () => {
         expect(body.msg).toBe("author not found");
       });
   });
+  test("POST: 201 returns the added article", () => {
+    return request(app).post('/api/articles')
+    .send({
+      author: 'rogersop',
+      title: 'The Mitch',
+      body: 'The wonders of mitch',
+      topic: 'mitch',
+      article_img_url: 'https://www.mitch.com/mitch'
+    })
+    .expect(201).then(({body}) => {
+      const {article} = body
+      expect(article.author).toBe('rogersop')
+      expect(article.title).toBe('The Mitch')
+      expect(article.body).toBe('The wonders of mitch')
+      expect(article.topic).toBe('mitch')
+      expect(article.article_img_url).toBe('https://www.mitch.com/mitch')
+      expect(article.votes).toBe(0)
+      expect(article.article_id).toBe(14)
+      expect(article.comment_count).toBe(0)
+      expect(article.hasOwnProperty('created_at')).toBe(true)
+    })
+  });
+  test("POST: 201 returns the added article (when article_img_url not provided returns default value)", () => {
+    return request(app).post('/api/articles')
+    .send({
+      author: 'rogersop',
+      title: 'The Mitch',
+      body: 'The wonders of mitch',
+      topic: 'mitch',
+    })
+    .expect(201).then(({body}) => {
+      const {article} = body
+      expect(article.author).toBe('rogersop')
+      expect(article.title).toBe('The Mitch')
+      expect(article.body).toBe('The wonders of mitch')
+      expect(article.topic).toBe('mitch')
+      expect(article.article_img_url).toBe('https://www.example.com/default_img')
+      expect(article.votes).toBe(0)
+      expect(article.article_id).toBe(14)
+      expect(article.comment_count).toBe(0)
+      expect(article.hasOwnProperty('created_at')).toBe(true)
+    })
+  });
+  test("POST: 400 returns an error message when missing required fields", () => {
+    return request(app).post('/api/articles')
+    .send(
+      {
+        author: 'rogersop',
+        title: 'The Mitch',
+      }
+    )
+    .expect(400)
+    .then(({body}) => {
+      expect(body.msg).toBe('bad request')
+    })
+  });
 });
 
 describe("/api/articles/:article_id/comments", () => {
