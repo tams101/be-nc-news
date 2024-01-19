@@ -572,6 +572,67 @@ describe("/api/articles/:article_id/comments", () => {
         expect(body.msg).toBe("not found");
       });
   });
+  test("GET: 200 returns an array of comments for an article that are paginated - default limit 10", () => {
+    return request(app).get('/api/articles/1/comments?p=1')
+    .expect(200)
+    .expect(({body}) => {
+      const {comments} = body
+      expect(comments).toHaveLength(10)
+      comments.forEach((comment) => {
+        expect(comment.article_id).toBe(1)
+      })
+    })
+  });
+  test("GET: 200 returns an array of comments for an article that are paginated - limit 3", () => {
+    return request(app).get('/api/articles/1/comments?p=2&limit=3')
+    .expect(200)
+    .expect(({body}) => {
+      const {comments} = body
+      expect(comments).toHaveLength(3)
+      expect(comments).toEqual(
+        [
+          {
+            comment_id: 18,
+            body: 'This morning, I showered for nine minutes.',
+            article_id: 1,
+            author: 'butter_bridge',
+            votes: 16,
+            created_at: "2020-07-21T00:20:00.000Z"
+          },
+          {
+            comment_id: 13,
+            body: 'Fruit pastilles',
+            article_id: 1,
+            author: 'icellusedkars',
+            votes: 0,
+            created_at: "2020-06-15T10:25:00.000Z"
+          },
+          {
+            comment_id: 7,
+            body: 'Lobster pot',
+            article_id: 1,
+            author: 'icellusedkars',
+            votes: 0,
+            created_at: "2020-05-15T20:19:00.000Z"
+          }
+        ]
+      )
+    })
+  });
+  test("GET: 400 returns an error message when given an incorrect data type for p query",() => {
+    return request(app).get('/api/articles/1/comments?p=one')
+    .expect(400)
+    .then(({body}) => {
+      expect(body.msg).toBe('bad request')
+    })
+  });
+  test("GET: 400 returns an error message when given an incorrect data type for p query",() => {
+    return request(app).get('/api/articles/1/comments?p=1&limit=ten')
+    .expect(400)
+    .then(({body}) => {
+      expect(body.msg).toBe('bad request')
+    })
+  })
 });
 
 describe("/api/comments/:comment_id", () => {

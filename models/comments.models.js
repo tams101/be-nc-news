@@ -1,9 +1,22 @@
 const db = require("../db/connection");
 
-exports.retrieveCommentsByArticleId = (article_id) => {
+exports.retrieveCommentsByArticleId = (article_id, p, limit = 10) => {
+  let queryStr = `SELECT * FROM comments WHERE article_id = $1 ORDER BY created_at DESC`
+  
+  if(p && limit) {
+    queryStr += ` LIMIT $2 OFFSET $3`
+    console.log(queryStr)
+
+    return db.query(queryStr, [article_id, limit, p])
+    .then(({rows}) => {
+      console.log(rows)
+      return rows
+    })
+  }
+
   return db
     .query(
-      "SELECT * FROM comments  WHERE article_id = $1 ORDER BY created_at DESC ",
+      queryStr,
       [article_id]
     )
     .then(({ rows }) => {
