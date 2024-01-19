@@ -24,7 +24,9 @@ exports.retrieveAllArticles = (
   topic,
   sort_by = "created_at",
   order = "desc",
-  author
+  author,
+  limit = 10,
+  p
 ) => {
   const validSortQueries = [
     "article_id",
@@ -69,7 +71,15 @@ exports.retrieveAllArticles = (
   }
 
   queryStr += ` GROUP BY articles.article_id
-    ORDER BY ${sort_by} ${order}`;
+    ORDER BY ${sort_by} ${order}
+    `;
+
+  if (p && limit) {
+    queryParams.push(limit, p);
+    queryStr += ` LIMIT $${queryParams.length - 1}
+    OFFSET (($${queryParams.length} - 1) * $${queryParams.length - 1})
+    `;
+  }
 
   return db.query(queryStr, queryParams).then(({ rows }) => {
     return rows;
@@ -96,7 +106,13 @@ exports.updateArticleVotesById = (newVote, article_id) => {
     });
 };
 
-exports.addNewArticle = ({ author, title, body, topic, article_img_url = "https://www.example.com/default_img" }) => {
+exports.addNewArticle = ({
+  author,
+  title,
+  body,
+  topic,
+  article_img_url = "https://www.example.com/default_img",
+}) => {
   return db
     .query(
       `

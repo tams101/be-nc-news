@@ -369,6 +369,13 @@ describe("/api/articles", () => {
       expect(body.msg).toBe('bad request')
     })
   });
+  test("GET: 200 returns all articles on page 1 (default returns 10 articles)", () => {
+    return request(app).get('/api/articles?p=1')
+    .expect(200).then(({body}) => {
+      const {articles} = body
+      expect(articles).toHaveLength(10)
+    })
+  })
 });
 
 describe("/api/articles/:article_id/comments", () => {
