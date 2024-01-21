@@ -1,25 +1,12 @@
 const db = require("../db/connection");
 
-exports.retrieveCommentsByArticleId = (article_id, p, limit = 10) => {
-  let queryStr = `SELECT * FROM comments WHERE article_id = $1 ORDER BY created_at DESC`
-  
-  if(p && limit) {
-    queryStr += ` LIMIT $2 OFFSET $3`
+exports.retrieveCommentsByArticleId = (article_id, p = 1, limit = 10) => {
+  const offset = (p - 1) * limit;
+  const queryStr = `SELECT * FROM comments WHERE article_id = $1 ORDER BY created_at DESC LIMIT $2 OFFSET $3`;
 
-    return db.query(queryStr, [article_id, limit, p])
-    .then(({rows}) => {
-      return rows
-    })
-  }
-
-  return db
-    .query(
-      queryStr,
-      [article_id]
-    )
-    .then(({ rows }) => {
-      return rows;
-    });
+  return db.query(queryStr, [article_id, limit, offset]).then(({ rows }) => {
+    return rows;
+  });
 };
 
 exports.addNewCommentByArticleId = (article_id, { username, body }) => {
@@ -48,7 +35,7 @@ exports.removeCommentById = (comment_id) => {
     )
     .then(({ rows }) => {
       if (rows.length === 0) {
-        return Promise.reject({ status: 404, msg:"comment does not exist" });
+        return Promise.reject({ status: 404, msg: "comment does not exist" });
       }
     });
 };
