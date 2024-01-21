@@ -13,7 +13,7 @@ beforeEach(() => {
   return seed(data);
 });
 
-describe.only("/api/topics", () => {
+describe("/api/topics", () => {
   test("GET: 200 Get all topics", () => {
     return request(app)
       .get("/api/topics")
@@ -52,14 +52,15 @@ describe.only("/api/topics", () => {
         expect(body.msg).toBe("bad request");
       });
   });
-  test.only("POST: 409 an error message is sent when trying to add a topic that already exists", () => {
-    return request(app).post('/api/topics')
-    .send({slug: "cats" })
-    .expect(409)
-    .then(({body}) => {
-      expect(body.msg).toBe('This already exists in the database')
-    })
-  })
+  test("POST: 409 an error message is sent when trying to add a topic that already exists", () => {
+    return request(app)
+      .post("/api/topics")
+      .send({ slug: "cats" })
+      .expect(409)
+      .then(({ body }) => {
+        expect(body.msg).toBe("This already exists in the database");
+      });
+  });
 });
 
 describe("Invalid path", () => {
@@ -227,7 +228,7 @@ describe("/api/articles", () => {
       .then(({ body }) => {
         const { articles } = body;
         expect(articles).toHaveLength(10); //Pagination default limit 10
-        expect(body.total_count).toBe(13)
+        expect(body.total_count).toBe(13);
         articles.forEach((article) => {
           expect(typeof article.author).toBe("string");
           expect(typeof article.title).toBe("string");
@@ -250,7 +251,7 @@ describe("/api/articles", () => {
       .then(({ body }) => {
         const { articles } = body;
         expect(articles).toHaveLength(10); //Pagination defualt limit 10
-        expect(body.total_count).toBe(13)
+        expect(body.total_count).toBe(13);
         expect(articles).toBeSortedBy("created_at", { ascending: true });
       });
   });
@@ -260,7 +261,7 @@ describe("/api/articles", () => {
       .expect(200)
       .then(({ body }) => {
         const { articles } = body;
-        expect(articles).toHaveLength(10) //Pagination default limit 10
+        expect(articles).toHaveLength(10); //Pagination default limit 10
         expect(body.total_count).toBe(12);
         articles.forEach((article) => {
           expect(article.topic === "mitch");
@@ -290,7 +291,7 @@ describe("/api/articles", () => {
       .then(({ body }) => {
         const { articles } = body;
         expect(articles).toHaveLength(10); //Pagination default limit 10
-        expect(body.total_count).toBe(13)
+        expect(body.total_count).toBe(13);
         expect(articles).toBeSortedBy("article_id", { descending: true });
       });
   });
@@ -301,7 +302,7 @@ describe("/api/articles", () => {
       .then(({ body }) => {
         const { articles } = body;
         expect(articles).toHaveLength(10);
-        expect(body.total_count).toBe(13)
+        expect(body.total_count).toBe(13);
         expect(articles).toBeSortedBy("topic", { descending: true });
       });
   });
@@ -312,7 +313,7 @@ describe("/api/articles", () => {
       .then(({ body }) => {
         const { articles } = body;
         expect(articles).toHaveLength(10);
-        expect(body.total_count).toBe(13)
+        expect(body.total_count).toBe(13);
         expect(articles).toBeSortedBy("article_id", { ascending: true });
       });
   });
@@ -323,7 +324,7 @@ describe("/api/articles", () => {
       .then(({ body }) => {
         const { articles } = body;
         expect(articles).toHaveLength(10);
-        expect(body.total_count).toBe(13)
+        expect(body.total_count).toBe(13);
         expect(articles).toBeSortedBy("topic", { ascending: true });
       });
   });
@@ -480,8 +481,7 @@ describe("/api/articles", () => {
           expect(body.msg).toBe("invalid input - must be a positive number");
         });
     });
-  })
-  
+  });
 });
 
 describe("/api/articles/:article_id/comments", () => {
@@ -583,26 +583,27 @@ describe("/api/articles/:article_id/comments", () => {
   });
   describe("Pagination - comments", () => {
     test("GET: 200 returns an array of comments for an article that are paginated - default limit 10", () => {
-      return request(app).get('/api/articles/1/comments?p=1')
-      .expect(200)
-      .expect(({body}) => {
-        const {comments} = body
-        expect(comments).toHaveLength(10)
-        comments.forEach((comment) => {
-          expect(comment.article_id).toBe(1)
-        })
-      })
+      return request(app)
+        .get("/api/articles/1/comments?p=1")
+        .expect(200)
+        .expect(({ body }) => {
+          const { comments } = body;
+          expect(comments).toHaveLength(10);
+          comments.forEach((comment) => {
+            expect(comment.article_id).toBe(1);
+          });
+        });
     });
     test("GET: 200 returns an array of comments for an article that are paginated - limit 3", () => {
-      return request(app).get('/api/articles/1/comments?p=2&limit=3')
-      .expect(200)
-      .expect(({body}) => {
-        const {comments} = body
-        expect(comments).toHaveLength(3)
-        expect(comments).toEqual(
-          [
+      return request(app)
+        .get("/api/articles/1/comments?p=2&limit=3")
+        .expect(200)
+        .expect(({ body }) => {
+          const { comments } = body;
+          expect(comments).toHaveLength(3);
+          expect(comments).toEqual([
             {
-              comment_id: 13, 
+              comment_id: 13,
               body: "Fruit pastilles",
               votes: 0,
               author: "icellusedkars",
@@ -624,27 +625,27 @@ describe("/api/articles/:article_id/comments", () => {
               author: "icellusedkars",
               article_id: 1,
               created_at: "2020-04-14T20:19:00.000Z",
-            }
-          ]
-        )
-      })
+            },
+          ]);
+        });
     });
-    test("GET: 400 returns an error message when given an incorrect data type for p query",() => {
-      return request(app).get('/api/articles/1/comments?p=not-a-num')
-      .expect(400)
-      .then(({body}) => {
-        expect(body.msg).toBe('bad request')
-      })
+    test("GET: 400 returns an error message when given an incorrect data type for p query", () => {
+      return request(app)
+        .get("/api/articles/1/comments?p=not-a-num")
+        .expect(400)
+        .then(({ body }) => {
+          expect(body.msg).toBe("bad request");
+        });
     });
-    test("GET: 400 returns an error message when given an incorrect data type for limit query",() => {
-      return request(app).get('/api/articles/1/comments?p=1&limit=ten')
-      .expect(400)
-      .then(({body}) => {
-        expect(body.msg).toBe('bad request')
-      })
-    })
-  })
-  
+    test("GET: 400 returns an error message when given an incorrect data type for limit query", () => {
+      return request(app)
+        .get("/api/articles/1/comments?p=1&limit=ten")
+        .expect(400)
+        .then(({ body }) => {
+          expect(body.msg).toBe("bad request");
+        });
+    });
+  });
 });
 
 describe("/api/comments/:comment_id", () => {
