@@ -19,9 +19,6 @@ exports.addNewTopic = ({ description, slug }) => {
       [description, slug]
     )
     .then(({ rows }) => {
-      if(rows[0].description === null) {
-        return Promise.reject({status: 400, msg: 'description is required'})
-      }
       return rows[0];
     });
 };

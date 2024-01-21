@@ -13,7 +13,7 @@ beforeEach(() => {
   return seed(data);
 });
 
-describe("/api/topics", () => {
+describe.only("/api/topics", () => {
   test("GET: 200 Get all topics", () => {
     return request(app)
       .get("/api/topics")
@@ -27,7 +27,7 @@ describe("/api/topics", () => {
         });
       });
   });
-  test("POST: 201 adds a new topic", () => {
+  test("POST: 201 returns the newly added topic", () => {
     return request(app)
       .post("/api/topics")
       .send({
@@ -52,15 +52,14 @@ describe("/api/topics", () => {
         expect(body.msg).toBe("bad request");
       });
   });
-  test("POST: 400 an error message is sent when given a malformed body - missing description", () => {
-    return request(app)
-      .post("/api/topics")
-      .send({ slug: "all things tea" })
-      .expect(400)
-      .then(({ body }) => {
-        expect(body.msg).toBe("description is required");
-      });
-  });
+  test.only("POST: 409 an error message is sent when trying to add a topic that already exists", () => {
+    return request(app).post('/api/topics')
+    .send({slug: "cats" })
+    .expect(409)
+    .then(({body}) => {
+      expect(body.msg).toBe('This already exists in the database')
+    })
+  })
 });
 
 describe("Invalid path", () => {

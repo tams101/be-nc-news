@@ -22,6 +22,10 @@ exports.psqlError = (err, req, res, next) => {
   if(err.code === "42703") {
     res.status(400).send({msg: "invalid input - must be a positive number"})
   }
+
+  if(err.code === "23505") {
+    res.status(409).send({msg: "This already exists in the database"})
+  }
   
   else {
     next(err);
