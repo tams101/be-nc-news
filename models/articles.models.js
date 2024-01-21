@@ -26,17 +26,15 @@ exports.retrieveAllArticles = (
   order = "desc",
   author,
   limit = 10,
-  p
+  p = 1
 ) => {
   const validSortQueries = [
     "article_id",
     "topic",
     "author",
     "title",
-    "body",
     "created_at",
     "votes",
-    "article_img_url",
   ];
 
   const validOrderQueries = ["asc", "desc"];
@@ -74,21 +72,16 @@ exports.retrieveAllArticles = (
     ORDER BY ${sort_by} ${order}
     `;
 
-  if (p && limit) {
-    return db.query(queryStr, queryParams).then((response) => {
-      const count = response.rowCount;
-      queryParams.push(limit, p);
-      queryStr += ` LIMIT $${queryParams.length - 1}
-    OFFSET (($${queryParams.length} - 1) * $${queryParams.length - 1})
-    `;
-      return db.query(queryStr, queryParams).then((response) => {
-        return { total_count: count, articles: response.rows };
-      });
-    });
-  }
+  const getArticlesCount = db.query(queryStr, queryParams);
 
-  return db.query(queryStr, queryParams).then(({ rows }) => {
-    return rows;
+  queryStr += ` LIMIT ${limit} OFFSET ${(p - 1) * limit}`;
+
+  const getArticles = db.query(queryStr, queryParams);
+
+  return Promise.all([getArticlesCount, getArticles]).then((result) => {
+    const total_count = result[0].rowCount;
+    const articles = result[1].rows;
+    return { articles, total_count };
   });
 };
 

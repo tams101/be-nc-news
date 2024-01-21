@@ -47,12 +47,8 @@ exports.getAllArticles = (req, res, next) => {
 
   Promise.all(queries)
     .then((response) => {
-      if (response[0].hasOwnProperty("total_count")) {
         res.status(200).send(response[0]);
-      } else {
-        const articles = response[0];
-        res.status(200).send({ articles });
-      }
+      
     })
     .catch((err) => {
       next(err);
