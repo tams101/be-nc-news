@@ -11,7 +11,6 @@ exports.postNewTopic = (req, res, next) => {
   addNewTopic(newTopic).then((addedTopic) => {
     res.status(201).send({topic: addedTopic})
   }).catch((err) => {
-    console.log(err)
     next(err)
   })
 }
