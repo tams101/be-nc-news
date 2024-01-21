@@ -9,9 +9,14 @@
       "topics": [{ "slug": "football", "description": "Footie!" }]
     }
   },
+  "POST /api/topics": {
+    "description": "adds a topic to the database",
+    "bodyFormat": {"slug": "topic", "description": "description here"},
+    "exampleResponse": {"slug": "topic", "description": "description here"}
+  },
   "GET /api/articles": {
     "description": "serves an array of all articles sorted by date in descending order by default",
-    "queries": ["author", "topic", "sort_by", "order"],
+    "queries": ["author", "topic", "sort_by", "order", "limit", "p"],
     "exampleResponse": {
       "articles": [
         {
@@ -24,10 +29,19 @@
           "article_id": 20,
           "article_img_url": "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700"
         }
-      ]
+      ],
+      "total_count": 20
     }
-  },"POST /api/articles": {
-    "description": "adds a new article",
+  },
+  "POST /api/articles": {
+    "description": "adds a new article to the database",
+    "bodyFormat": {
+      "title": "The Mitch",
+      "topic": "mitch",
+      "author": "rogersop",
+      "body": "The wonders of mitch",
+      "article_img_url": "https://www.mitch.com/mitch",
+    },
     "exampleResponse": {
       "article_id": 14,
       "title": "The Mitch",
@@ -61,6 +75,7 @@
   "PATCH /api/articles/:article_id": {
     "description": "serves the updated article with the update votes property",
     "queries": [],
+    "bodyFormat": {"inc_votes": -100},
     "exampleResponse": {
       "article_id": 3,
       "title": "Eight pug gifs that remind me of mitch",
@@ -72,9 +87,13 @@
       "votes": -100
     }
   },
+  "DELETE /api/articles/:article_id": {
+    "description": "removes an article by id",
+    "exampleResponse": {}
+  },
   "GET /api/articles/:article_id/comments": {
     "description": "Serves an array of comments for the given article",
-    "queries": [],
+    "queries": ["limit", "p"],
     "exampleResponse" :[{
       "comment_id": 1,
       "votes": 1,
@@ -83,10 +102,13 @@
       "body": "This is the body.",
       "article_id": 99
   }]},
-  "POST /api/articles/:article_id/comments":
-    {
+  "POST /api/articles/:article_id/comments": {
       "description": "Adds a new comment to the given article",
       "queries": [],
+      "bodyExample": {
+        "username": "rogersop",
+        "body": "This article was brilliant."
+      },
       "exampleResponse": {
         "comment": {
           "comment_id": 19,
@@ -96,21 +118,38 @@
           "votes": 0,
           "created_at": "2024-01-16T14:34:02.738Z"
     }}
+  }, 
+  "PATCH /api/comments/:comment_id": {
+    "description": "serves an updated comment by comment id",
+    "bodyFormat": { "inc_votes": 1},
+    "exampleResponse": {
+      "comment": {
+        "comment_id": 19,
+        "body": "This article was brilliant.",
+        "article_id": 2,
+        "author": "rogersop",
+        "votes": 1,
+        "created_at": "2024-01-16T14:34:02.738Z"
+  }
+    }
   },
+
   "DELETE /api/comments/:comment_id": {
     "description": "Removes a comment using the comment id",
-    "exampleResponse": "No response"
+    "exampleResponse": {}
   },
   "GET /api/users": {
     "description": "serves an array of all users",
     "queries": [],
-    "exampleResponse": 
-    [
-      {
-      "username": "butter_bridge",
-      "name": "jonny",
-      "avatar_url": "https://www.healthytherapies.com/wp-content/uploads/2016/06/Lime3.jpg"
-    }]
+    "exampleResponse": {
+      "users": [
+        {
+        "username": "butter_bridge",
+        "name": "jonny",
+        "avatar_url": "https://www.healthytherapies.com/wp-content/uploads/2016/06/Lime3.jpg"
+      }]
+    }
+    
   },
   "GET /api/users/:username": {
     "description": "serves a user object for a given username",
