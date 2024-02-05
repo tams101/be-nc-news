@@ -1,5 +1,5 @@
 const express = require("express");
-
+const cors = require("cors")
 const {
   invalidPath,
   psqlError,
@@ -14,6 +14,8 @@ const topicsRouter = require("./routes/topics-router");
 const usersRouter = require("./routes/users-router");
 
 const app = express();
+
+app.use(cors())
 
 app.use(express.json());
 
