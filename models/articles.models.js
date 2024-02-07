@@ -35,6 +35,7 @@ exports.retrieveAllArticles = (
     "title",
     "created_at",
     "votes",
+    "comment_count"
   ];
 
   const validOrderQueries = ["asc", "desc"];

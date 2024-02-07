@@ -306,6 +306,17 @@ describe("/api/articles", () => {
         expect(articles).toBeSortedBy("topic", { descending: true });
       });
   });
+  test("GET: 200 responds with an articles array of article objects sorted by comment_count - default desc order", () => {
+    return request(app)
+      .get("/api/articles?sort_by=comment_count")
+      .expect(200)
+      .then(({ body }) => {
+        const { articles } = body;
+        expect(articles).toHaveLength(10);
+        expect(body.total_count).toBe(13);
+        expect(articles).toBeSortedBy("comment_count", { descending: true });
+      });
+  });
   test("GET: 200 responds with an articles array of article objects sorted by article_id - asc order", () => {
     return request(app)
       .get("/api/articles?sort_by=article_id&order=asc")

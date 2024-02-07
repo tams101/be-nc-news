@@ -22,7 +22,7 @@ exports.getArticleById = (req, res, next) => {
 };
 
 exports.getAllArticles = (req, res, next) => {
-  const { topic, sort_by, order, author, limit, p } = req.query;
+  const { topic, sort_by, order, author, limit, p, comment_count } = req.query;
 
   const fetchArticlesQuery = retrieveAllArticles(
     topic,
@@ -30,7 +30,8 @@ exports.getAllArticles = (req, res, next) => {
     order,
     author,
     limit,
-    p
+    p,
+    comment_count
   );
 
   const queries = [fetchArticlesQuery];
