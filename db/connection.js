@@ -16,7 +16,7 @@ if (ENV === "production") {
   config.database = process.env.DB_NAME,
   config.ssl = {
       rejectUnauthorized: true,
-      ca: fs.readFileSync("./ca.pem").toString(),
+      ca: process.env.DB_CERT,
   }
 }
 
