@@ -1,4 +1,5 @@
 const { Pool } = require("pg");
+const fs = require("fs");
 const ENV = process.env.NODE_ENV || "development";
 
 require("dotenv").config({
@@ -8,8 +9,15 @@ require("dotenv").config({
 const config = {};
 
 if (ENV === "production") {
-  config.connectionString = process.env.DATABASE_URL;
-  config.max = 2;
+  config.user = process.env.DB_USER,
+  config.password = process.env.DB_PASSWORD,
+  config.host = process.env.DB_HOST,
+  config.port = 28540,
+  config.database = process.env.DB_NAME,
+  config.ssl = {
+      rejectUnauthorized: true,
+      ca: fs.readFileSync("./ca.pem").toString(),
+  }
 }
 
 if (!process.env.PGDATABASE && !process.env.DATABASE_URL) {
